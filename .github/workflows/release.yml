@@ -3,14 +3,14 @@ name: Build and publish release JAR
 on:
   push:
     tags:
-      - 'v*'       # trigger khi push tag bắt đầu bằng "v", ví dụ v1.0.0
+      - 'v*'   # Trigger khi push tag bắt đầu bằng v, ví dụ v1.0.0
 
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up JDK 21
@@ -40,22 +40,13 @@ jobs:
           echo "jar_path=$JAR" >> $GITHUB_OUTPUT
         shell: bash
 
-      - name: Upload JAR to Release
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.find_jar.outputs.jar_path }}
-          asset_name: ${{ github.ref_name }}.jar
-          asset_content_type: application/java-archive
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
+      - name: Install GitHub CLI
+        run: sudo apt-get install gh -y
 
-      - name: Upload JAR to Release
-        uses: actions/upload-release-asset@v1
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ${{ steps.find_jar.outputs.jar_path }}
-          asset_name: ${{ github.ref_name }}.jar
-          asset_content_type: application/java-archive
+      - name: Create GitHub Release and Upload JAR
+        run: |
+          gh release create ${{ github.ref_name }} ${{ steps.find_jar.outputs.jar_path }} \
+            --title "Release ${{ github.ref_name }}" \
+            --notes "Automated release for ${{ github.ref_name }}"
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
