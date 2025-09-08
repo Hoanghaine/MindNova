@@ -24,6 +24,7 @@ import java.util.Optional;
 public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
     private final UserRepository userRepository;
+
     @Override
     public PostDto createPost(PostRequestDto requestDto) {
         // 1. Lấy author

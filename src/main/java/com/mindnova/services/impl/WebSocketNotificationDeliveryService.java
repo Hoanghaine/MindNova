@@ -33,7 +33,7 @@ public class WebSocketNotificationDeliveryService implements NotificationDeliver
 
         try {
             // Logic gửi WebSocket (mock)
-            log.info("🔔 [Mock WebSocket] Push notification to userId={} | title={} | content={}",
+            log.info("[Mock WebSocket] Push notification to userId={} | title={} | content={}",
                     dto.userId(), dto.title(), dto.content());
 
             // Log thành công

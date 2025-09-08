@@ -53,7 +53,7 @@ public class InAppNotificationDeliveryService implements NotificationDeliverySer
 
             notificationDeliveryRepository.save(delivery);
 
-            System.out.printf("🔔 [In-App] Saved notification for user=%d | title=%s%n",
+            System.out.printf("[In-App] Saved notification for user=%d | title=%s%n",
                     dto.userId(), dto.title());
 
         } catch (Exception e) {

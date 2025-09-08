@@ -10,8 +10,8 @@ import com.mindnova.dto.request.UpdateStatusAppointmentRequest;
 import com.mindnova.dto.response.AppointmentResponseDto;
 import com.mindnova.entities.Appointment;
 import com.mindnova.entities.User;
-import com.mindnova.manager.NotificationObserverManager;
 import com.mindnova.mappers.AppointmentMapper;
+import com.mindnova.publisher.NotificationPublisher;
 import com.mindnova.repositories.AppointmentRepository;
 import com.mindnova.repositories.UserRepository;
 import com.mindnova.services.AppointmentService;
@@ -32,7 +32,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
     private final UserRepository userRepository;
-    private final NotificationObserverManager notificationObserverManager;
+    private final NotificationPublisher notificationPublisher;
 
     @Override
     public AppointmentResponseDto createAppointment(CreateAppointmentRequest createAppointmentRequest) {
@@ -104,7 +104,7 @@ public class AppointmentServiceImpl implements AppointmentService {
     }
 
     @Override
-    @PreAuthorize("hasAuthority('DOCTOR')")
+    @PreAuthorize("hasRole('DOCTOR')")
     public AppointmentResponseDto updateStatusAppointment(UpdateStatusAppointmentRequest updateStatusAppointmentRequest) {
         Appointment appointment = appointmentRepository.findById(updateStatusAppointmentRequest.getId())
                 .orElseThrow(() -> new RuntimeException("Appointment not found"));
@@ -124,7 +124,7 @@ public class AppointmentServiceImpl implements AppointmentService {
                 .build();
 
         // Gửi notification qua observer manager
-        notificationObserverManager.notifyUser(dto);
+        notificationPublisher.publish(dto);
 
         return AppointmentMapper.toDto(saved);
     }

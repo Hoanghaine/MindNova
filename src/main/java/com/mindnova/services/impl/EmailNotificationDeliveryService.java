@@ -30,7 +30,7 @@ public class EmailNotificationDeliveryService implements NotificationDeliverySer
             // Thay phần mock bằng logic thật
             // emailSender.send(email, dto.title(), dto.content());
 
-            System.out.printf("📧 [Mock Email] To: %s | Subject: %s | Content: %s%n", email, dto.title(), dto.content());
+            System.out.printf("[Mock Email] To: %s | Subject: %s | Content: %s%n", email, dto.title(), dto.content());
             // Log delivery
             NotificationDelivery delivery = NotificationDelivery.builder()
                     .user(userRepository.getReferenceById(dto.userId()))

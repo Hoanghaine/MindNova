@@ -20,7 +20,6 @@ public class NotificationDelivery {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    // tham chiếu đến notification in-app (có thể null nếu chỉ là email/sms)
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "notification_id")
     private Notification notification;

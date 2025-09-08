@@ -3,7 +3,6 @@ package com.mindnova.services.decorators;
 import com.mindnova.dto.PostDto;
 import com.mindnova.dto.request.PostRequestDto;
 import com.mindnova.services.PostService;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -19,21 +18,23 @@ public class ProfanityFilterDecorator extends PostServiceDecorator {
     }
 
     private List<String> loadBadWords() {
+        String filePath = System.getenv().getOrDefault("BADWORDS_PATH", "src/main/resources/badwords.txt");
+
         try {
-            return Files.lines(Paths.get("src/main/resources/badwords.txt"))
+            return Files.lines(Paths.get(filePath))
                     .map(String::toLowerCase)
                     .map(String::trim)
                     .filter(s -> !s.isEmpty())
                     .collect(Collectors.toList());
         } catch (IOException e) {
-            throw new RuntimeException("Failed to load badwords.txt", e);
+            throw new RuntimeException("Failed to load badwords.txt from " + filePath, e);
         }
     }
 
+
     @Override
     public PostDto createPost(PostRequestDto requestDto) {
-        for (String word :
-                bannedWords) {
+        for (String word : bannedWords) {
             if (requestDto.getTitle().toLowerCase().contains(word) ||
                     requestDto.getContent().toLowerCase().contains(word)) {
                 throw new RuntimeException("Post contains prohibited word: " + word);
