@@ -3,6 +3,8 @@ package com.mindnova.services.decorators;
 import com.mindnova.dto.PostDto;
 import com.mindnova.dto.request.PostRequestDto;
 import com.mindnova.services.PostService;
+import org.springframework.beans.factory.annotation.Value;
+
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -12,14 +14,12 @@ import java.util.stream.Collectors;
 public class ProfanityFilterDecorator extends PostServiceDecorator {
     private final List<String> bannedWords;
 
-    public ProfanityFilterDecorator(PostService delegate) {
+    public ProfanityFilterDecorator(PostService delegate,String filePath) {
         super(delegate);
-        this.bannedWords = loadBadWords();
+        this.bannedWords = loadBadWords(filePath);
     }
 
-    private List<String> loadBadWords() {
-        String filePath = System.getenv().getOrDefault("BADWORDS_PATH", "src/main/resources/badwords.txt");
-
+    private List<String> loadBadWords(String filePath) {
         try {
             return Files.lines(Paths.get(filePath))
                     .map(String::toLowerCase)
@@ -30,7 +30,6 @@ public class ProfanityFilterDecorator extends PostServiceDecorator {
             throw new RuntimeException("Failed to load badwords.txt from " + filePath, e);
         }
     }
-
 
     @Override
     public PostDto createPost(PostRequestDto requestDto) {
